@@ -58,7 +58,55 @@ Test with Postman/Thunder Client, or just open `frontend-vanilla/index.html`.
 Open `frontend-vanilla/index.html` directly in a browser (or serve it with the VS Code
 Live Server extension). It talks to the API at `http://localhost:5000`.
 
+## Level 2 (Intermediate): React frontend + JWT Auth
+
+Covers:
+- **Task 1 — Frontend with a JavaScript Framework**: `frontend-react/` (Vite + React, replaces the vanilla frontend).
+- **Task 2 — Authentication and Authorization**: signup/login with bcrypt + JWT, role-based access (admin vs. user) enforced on the backend and reflected in the UI.
+
+### 1. Update the database
+
+The users table is new — reload the schema (safe to re-run, it uses `CREATE TABLE IF NOT EXISTS` and `ON CONFLICT DO NOTHING`):
+
+```bash
+psql -U postgres -d codveda_ecommerce -f backend/db/schema.sql
+```
+
+### 2. Update the backend
+
+```bash
+cd backend
+npm install        # picks up bcrypt + jsonwebtoken
+```
+
+Add these two lines to `backend/.env` (see `.env.example`):
+```
+JWT_SECRET=change_this_to_a_long_random_string
+JWT_EXPIRES_IN=7d
+```
+
+Restart the server (`npm run dev`). New endpoints:
+
+| Method | Route | Auth | Description |
+|---|---|---|---|
+| POST | /api/auth/signup | — | Create an account. **First user to sign up becomes admin automatically.** |
+| POST | /api/auth/login | — | Log in, returns a JWT |
+| GET | /api/auth/me | Bearer token | Returns the logged-in user |
+| POST/PUT/DELETE | /api/products... | Bearer token, admin role | Now protected — only admins can modify products |
+| GET | /api/products... | — | Still public, anyone can browse |
+
+### 3. Run the React frontend
+
+```bash
+cd frontend-react
+npm install
+npm run dev
+```
+
+Open the URL it prints (usually `http://localhost:5173`). Sign up — your first account is an admin, so you'll see the Add/Edit/Delete form. Sign up a second account from an incognito window to see the read-only viewer experience.
+
+The old `frontend-vanilla/` still works independently against the same API (product browsing only, since it has no login).
+
 ## Next steps
 
-- **Level 2**: rebuild the frontend in React and add JWT authentication.
 - **Level 3**: full deployment + WebSocket-based live stock/order notifications.

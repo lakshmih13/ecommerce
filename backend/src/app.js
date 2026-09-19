@@ -1,6 +1,7 @@
 const express = require("express");
 const cors = require("cors");
 const productRoutes = require("./routes/products");
+const authRoutes = require("./routes/auth");
 
 const app = express();
 
@@ -11,6 +12,7 @@ app.get("/", (req, res) => {
   res.json({ message: "Codveda E-Commerce API is running" });
 });
 
+app.use("/api/auth", authRoutes);
 app.use("/api/products", productRoutes);
 
 // 404 handler
