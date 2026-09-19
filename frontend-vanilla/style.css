@@ -1,0 +1,142 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  font-family: system-ui, -apple-system, sans-serif;
+  margin: 0;
+  background: #f5f6fa;
+  color: #1a1a1a;
+}
+
+header {
+  background: #16213e;
+  color: white;
+  padding: 24px 32px;
+}
+
+header h1 {
+  margin: 0 0 4px 0;
+}
+
+header p {
+  margin: 0;
+  opacity: 0.8;
+  font-size: 0.9rem;
+}
+
+main {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 24px;
+  display: grid;
+  grid-template-columns: 300px 1fr;
+  gap: 24px;
+}
+
+@media (max-width: 720px) {
+  main {
+    grid-template-columns: 1fr;
+  }
+}
+
+section {
+  background: white;
+  border-radius: 10px;
+  padding: 20px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+input, textarea, button {
+  font-family: inherit;
+  font-size: 0.95rem;
+  padding: 10px;
+  border-radius: 6px;
+  border: 1px solid #ddd;
+}
+
+textarea {
+  resize: vertical;
+  min-height: 60px;
+}
+
+.form-buttons {
+  display: flex;
+  gap: 8px;
+}
+
+button {
+  background: #0f3460;
+  color: white;
+  border: none;
+  cursor: pointer;
+  flex: 1;
+}
+
+button:hover {
+  background: #16213e;
+}
+
+#cancel-btn {
+  background: #888;
+}
+
+.hidden {
+  display: none;
+}
+
+.product-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 14px;
+}
+
+.product-card {
+  border: 1px solid #eee;
+  border-radius: 8px;
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.product-card h3 {
+  margin: 0;
+}
+
+.product-card .price {
+  font-weight: bold;
+  color: #0f3460;
+}
+
+.product-card .meta {
+  font-size: 0.8rem;
+  color: #777;
+}
+
+.card-actions {
+  display: flex;
+  gap: 6px;
+  margin-top: auto;
+}
+
+.card-actions button {
+  padding: 6px;
+  font-size: 0.85rem;
+}
+
+.card-actions .delete-btn {
+  background: #b93c3c;
+}
+
+#status {
+  font-size: 0.9rem;
+  color: #b93c3c;
+  min-height: 18px;
+}
