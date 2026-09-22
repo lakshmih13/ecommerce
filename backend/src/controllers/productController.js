@@ -1,4 +1,7 @@
 const pool = require("../config/db");
+const { emitProductEvent } = require("../socket");
+
+const LOW_STOCK_THRESHOLD = 5;
 
 // GET /api/products
 async function getAllProducts(req, res) {
@@ -46,6 +49,7 @@ async function createProduct(req, res) {
       [name, description || null, price, category || null, stock || 0, image_url || null]
     );
     res.status(201).json(result.rows[0]);
+    emitProductEvent("product:created", result.rows[0]);
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: "Failed to create product" });
@@ -81,6 +85,12 @@ async function updateProduct(req, res) {
       ]
     );
     res.status(200).json(result.rows[0]);
+
+    const updated = result.rows[0];
+    emitProductEvent("product:updated", updated);
+    if (updated.stock <= LOW_STOCK_THRESHOLD) {
+      emitProductEvent("product:low-stock", updated);
+    }
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: "Failed to update product" });
@@ -99,6 +109,7 @@ async function deleteProduct(req, res) {
       return res.status(404).json({ error: "Product not found" });
     }
     res.status(200).json({ message: "Product deleted", product: result.rows[0] });
+    emitProductEvent("product:deleted", result.rows[0]);
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: "Failed to delete product" });

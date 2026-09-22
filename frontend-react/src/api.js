@@ -1,4 +1,4 @@
-const API_URL = "http://localhost:5000/api";
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000/api";
 
 function getToken() {
   return localStorage.getItem("token");
@@ -30,6 +30,10 @@ export const api = {
   signup: (payload) => request("/auth/signup", { method: "POST", body: payload }),
   login: (payload) => request("/auth/login", { method: "POST", body: payload }),
   me: () => request("/auth/me", { auth: true }),
+
+  // orders
+  createOrder: (payload) => request("/orders", { method: "POST", body: payload, auth: true }),
+  getOrders: () => request("/orders", { auth: true }),
 
   // products
   getProducts: () => request("/products"),

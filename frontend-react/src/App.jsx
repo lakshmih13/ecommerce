@@ -1,9 +1,12 @@
-import React from "react";
+import React, { useState } from "react";
 import { Routes, Route, Navigate, Link } from "react-router-dom";
 import { useAuth } from "./context/AuthContext.jsx";
+import { useCart } from "./context/CartContext.jsx";
 import Login from "./pages/Login.jsx";
 import Signup from "./pages/Signup.jsx";
 import Catalog from "./pages/Catalog.jsx";
+import Orders from "./pages/Orders.jsx";
+import CartDrawer from "./components/CartDrawer.jsx";
 
 function ProtectedRoute({ children }) {
   const { user, loading } = useAuth();
@@ -12,21 +15,37 @@ function ProtectedRoute({ children }) {
   return children;
 }
 
+function AdminRoute({ children }) {
+  const { isAdmin, loading } = useAuth();
+  if (loading) return <p className="loading-text">Loading...</p>;
+  if (!isAdmin) return <Navigate to="/" replace />;
+  return children;
+}
+
 export default function App() {
-  const { user, logout, loading } = useAuth();
+  const { user, logout, loading, isAdmin } = useAuth();
+  const { count } = useCart();
+  const [cartOpen, setCartOpen] = useState(false);
 
   return (
     <div>
       <header className="app-header">
-        <div>
-          <h1>Codveda Product Catalog</h1>
-          <p>Level 2 — React + JWT authentication ({user?.role === "admin" ? "Admin" : "Viewer"} view)</p>
+        <div className="brand">
+          <span className="brand-mark">Codveda</span>
+          <span className="brand-sub">General Store &amp; Catalog</span>
         </div>
         <nav>
           {!loading && user ? (
             <>
+              {isAdmin && <Link to="/orders">Orders</Link>}
+              <Link to="/">Catalog</Link>
+              {!isAdmin && (
+                <button className="cart-btn" onClick={() => setCartOpen(true)}>
+                  Cart{count > 0 ? ` (${count})` : ""}
+                </button>
+              )}
               <span className="user-badge">
-                {user.name} ({user.role})
+                {user.name} · {user.role}
               </span>
               <button onClick={logout}>Log Out</button>
             </>
@@ -40,6 +59,7 @@ export default function App() {
           )}
         </nav>
       </header>
+      <div className="header-stripe" aria-hidden="true"></div>
 
       <main>
         <Routes>
@@ -53,8 +73,20 @@ export default function App() {
               </ProtectedRoute>
             }
           />
+          <Route
+            path="/orders"
+            element={
+              <ProtectedRoute>
+                <AdminRoute>
+                  <Orders />
+                </AdminRoute>
+              </ProtectedRoute>
+            }
+          />
         </Routes>
       </main>
+
+      <CartDrawer open={cartOpen} onClose={() => setCartOpen(false)} />
     </div>
   );
 }

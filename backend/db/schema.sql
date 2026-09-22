@@ -30,3 +30,12 @@ VALUES
     ('Ceramic Mug', '350ml matte ceramic coffee mug', 9.50, 'Home', 200, ''),
     ('Running Shoes', 'Lightweight breathable running shoes', 74.99, 'Apparel', 30, '')
 ON CONFLICT DO NOTHING;
+
+CREATE TABLE IF NOT EXISTS orders (
+    id SERIAL PRIMARY KEY,
+    user_id INTEGER NOT NULL REFERENCES users(id),
+    items JSONB NOT NULL,
+    total NUMERIC(10, 2) NOT NULL,
+    status VARCHAR(20) NOT NULL DEFAULT 'placed',
+    created_at TIMESTAMP NOT NULL DEFAULT NOW()
+);
